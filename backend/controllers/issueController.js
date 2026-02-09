@@ -183,16 +183,10 @@ const updateIssue = asyncHandler(async (req, res) => {
         throw new Error('Issue not found');
     }
 
-    // Check ownership
-    if (issue.reporter.toString() !== req.user._id.toString() && req.user.role === 'citizen') {
+    // Check ownership or admin
+    if (req.user.role === 'citizen') {
         res.status(403);
-        throw new Error('Not authorized to update this issue');
-    }
-
-    // Only allow updates if status is 'reported'
-    if (issue.status !== 'reported' && req.user.role === 'citizen') {
-        res.status(400);
-        throw new Error('Cannot update issue after it has been verified');
+        throw new Error('Not authorized to update issues. Please contact an admin for changes.');
     }
 
     const { title, description, category, priority } = req.body;
