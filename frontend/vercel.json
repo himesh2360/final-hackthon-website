@@ -1,12 +1,13 @@
 {
-    "routes": [
+    "version": 2,
+    "rewrites": [
         {
-            "src": "/api/(.*)",
-            "dest": "https://final-hackthon-website.onrender.com/api/$1"
+            "source": "/api/:path*",
+            "destination": "https://final-hackthon-website.onrender.com/api/:path*"
         },
         {
-            "src": "/(.*)",
-            "dest": "/index.html"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
