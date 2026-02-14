@@ -14,6 +14,7 @@ const issueSchema = new mongoose.Schema({
     },
     category: {
         type: String,
+        lowercase: true,
         required: [true, 'Category is required'],
         enum: [
             'roads',
@@ -25,9 +26,11 @@ const issueSchema = new mongoose.Schema({
             'garbage',
             'public_safety',
             'parks',
+            'pollution',
             'other'
         ]
     },
+
     images: [{
         url: String,
         publicId: String
@@ -43,6 +46,10 @@ const issueSchema = new mongoose.Schema({
             required: [true, 'Location coordinates are required']
         },
         address: {
+            type: String,
+            default: ''
+        },
+        state: {
             type: String,
             default: ''
         }

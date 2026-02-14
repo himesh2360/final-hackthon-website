@@ -47,7 +47,7 @@ const Home = () => {
   const loadData = useCallback(async () => {
     try {
       const [issuesRes, statsRes] = await Promise.all([
-        issuesAPI.getAll({ limit: 8 }),
+        issuesAPI.getAll({ limit: 8, ...filters }),
         analyticsAPI.getOverview().catch(() => ({ data: { stats: null } }))
       ]);
       setRecentIssues(issuesRes.data.issues);
@@ -63,7 +63,7 @@ const Home = () => {
     loadData();
     const interval = setInterval(loadData, 30000);
     return () => clearInterval(interval);
-  }, [loadData]);
+  }, [loadData, filters]);
 
   const handleUpvote = useCallback(async (issueId) => {
     if (!isAuthenticated) {
@@ -110,7 +110,21 @@ const Home = () => {
   }, []);
 
   return (
-    <>
+    <div className="home-root" style={{
+      '--sidebar-width': sidebarOpen ? '320px' : '0px',
+      '--sidebar-transform': sidebarOpen ? 'translateX(0)' : 'translateX(100%)',
+      '--popup-padding': sidebarOpen ? '40px' : '50px 60px',
+      '--popup-max-width': sidebarOpen ? '650px' : '900px',
+      '--popup-margin': sidebarOpen ? '50px auto 40px' : '60px auto 50px',
+      '--status-gap': sidebarOpen ? '18px' : '28px',
+      '--status-padding': sidebarOpen ? '24px 18px' : '32px 24px',
+      '--status-emoji-size': sidebarOpen ? '2.5rem' : '3.5rem',
+      '--status-label-size': sidebarOpen ? '0.95rem' : '1.1rem',
+      '--status-count-size': sidebarOpen ? '2.8rem' : '3.5rem',
+      '--status-desc-size': sidebarOpen ? '0.8rem' : '0.95rem',
+      '--grid-cols': sidebarOpen ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+      '--title-size': sidebarOpen ? '3rem' : '4rem',
+    }}>
       <style>{`
         .home-layout {
           display: flex;
@@ -121,29 +135,20 @@ const Home = () => {
         .home-main {
           flex: 1;
           margin-left: 280px;
-          margin-right: ${sidebarOpen ? '320px' : '0px'};
-          transition: margin-right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          /* Dark India Map Background */
+          margin-right: var(--sidebar-width);
+          transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           background: 
             linear-gradient(180deg, 
-              rgba(8, 12, 21, 0.85) 0%, 
-              rgba(8, 12, 21, 0.75) 30%,
-              rgba(8, 12, 21, 0.80) 70%, 
-              rgba(8, 12, 21, 0.92) 100%
+              rgba(8, 12, 21, 0.8) 0%, 
+              rgba(8, 12, 21, 0.9) 100%
             ),
-            url('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/4/11/6.png'),
-            url('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/4/12/6.png'),
-            url('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/4/11/7.png'),
-            url('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/4/12/7.png'),
-            linear-gradient(135deg, #080c15 0%, #0d1520 50%, #0a0f18 100%);
-          background-size: cover, 50% 50%, 50% 50%, 50% 50%, 50% 50%, cover;
-          background-position: center, 0% 0%, 50% 0%, 0% 50%, 50% 50%, center;
-          background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-          background-attachment: fixed;
-          min-height: 100%;
+            url('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/4/11/6.png');
+          background-size: cover;
+          background-position: center;
           overflow-x: hidden;
           position: relative;
           will-change: margin-right;
+          contain: layout paint;
         }
         
         /* Dark blue glow overlay */
@@ -155,12 +160,9 @@ const Home = () => {
           right: 0;
           bottom: 0;
           background: 
-            radial-gradient(ellipse 80% 60% at 50% 35%, rgba(30, 64, 120, 0.25) 0%, transparent 70%),
-            radial-gradient(circle at 25% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 75% 40%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            radial-gradient(ellipse 80% 60% at 50% 35%, rgba(30, 64, 120, 0.15) 0%, transparent 70%);
           pointer-events: none;
           z-index: 0;
-          animation: glowMove 15s ease-in-out infinite alternate;
         }
         
         @keyframes glowMove {
@@ -217,9 +219,9 @@ const Home = () => {
           background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
           border: 2px solid rgba(59, 130, 246, 0.4);
           border-radius: 28px;
-          padding: ${sidebarOpen ? '40px' : '50px 60px'};
-          max-width: ${sidebarOpen ? '650px' : '900px'};
-          margin: ${sidebarOpen ? '50px auto 40px' : '60px auto 50px'};
+          padding: var(--popup-padding);
+          max-width: var(--popup-max-width);
+          margin: var(--popup-margin);
           box-shadow: 
             0 0 100px rgba(59, 130, 246, 0.25),
             0 35px 80px rgba(0, 0, 0, 0.6),
@@ -253,7 +255,7 @@ const Home = () => {
         }
         
         .popup-icon {
-          font-size: ${sidebarOpen ? '3rem' : '4rem'};
+          font-size: var(--status-emoji-size);
           transition: font-size 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           animation: iconBounce 0.8s ease-out 0.3s;
         }
@@ -265,35 +267,14 @@ const Home = () => {
         
         /* ===== GLOWING TITLE EFFECT - BIGGER ===== */
         .popup-title {
-          font-size: ${sidebarOpen ? '3rem' : '4rem'};
+          font-size: var(--title-size);
           font-weight: 900;
           margin: 0;
           color: #f8fafc;
           letter-spacing: -0.02em;
-          text-shadow: 
-            0 0 15px rgba(248, 250, 252, 0.6),
-            0 0 30px rgba(248, 250, 252, 0.4),
-            0 0 50px rgba(59, 130, 246, 0.4),
-            0 0 80px rgba(59, 130, 246, 0.3);
-          animation: glowPulse 3s ease-in-out infinite, fadeInTitle 0.8s ease-out 0.2s both;
-          transition: font-size 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), text-shadow 0.3s ease;
-        }
-        
-        @keyframes glowPulse {
-          0%, 100% { 
-            text-shadow: 
-              0 0 10px rgba(248, 250, 252, 0.5),
-              0 0 20px rgba(248, 250, 252, 0.3),
-              0 0 40px rgba(59, 130, 246, 0.3),
-              0 0 60px rgba(59, 130, 246, 0.2);
-          }
-          50% { 
-            text-shadow: 
-              0 0 15px rgba(248, 250, 252, 0.7),
-              0 0 30px rgba(248, 250, 252, 0.5),
-              0 0 50px rgba(59, 130, 246, 0.5),
-              0 0 80px rgba(59, 130, 246, 0.4);
-          }
+          text-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+          animation: fadeInTitle 0.8s ease-out 0.2s both;
+          transition: font-size 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         
         @keyframes fadeInTitle {
@@ -314,7 +295,7 @@ const Home = () => {
         .status-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: ${sidebarOpen ? '18px' : '28px'};
+          gap: var(--status-gap);
           transition: gap 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         
@@ -429,8 +410,8 @@ const Home = () => {
           color: white;
           font-size: 1.5rem;
           box-shadow: -4px 0 20px rgba(239, 68, 68, 0.5);
-          transition: right 0.3s ease-out, width 0.2s ease;
-          will-change: right;
+          transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: right, transform;
         }
         
         .toggle-btn.open {
@@ -460,7 +441,7 @@ const Home = () => {
           padding: 24px 16px;
           z-index: 100;
           transform: translateX(0);
-          transition: transform 0.3s ease-out;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           will-change: transform;
         }
         
@@ -495,7 +476,7 @@ const Home = () => {
         
         .issues-grid {
           display: grid;
-          grid-template-columns: ${sidebarOpen ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'};
+          grid-template-columns: var(--grid-cols);
           gap: 28px;
           transition: grid-template-columns 0.5s ease;
         }
@@ -1079,13 +1060,6 @@ const Home = () => {
             </div>
           </div>
 
-          {/* ===== REPORT ISSUE CTA ===== */}
-          <Link to="/create-issue" className="report-cta">
-            <div className="report-icon">
-              <FiCamera />
-            </div>
-            <span className="report-text">Report an Issue</span>
-          </Link>
 
           {/* ===== RECENT ISSUES WITH PHOTOS ===== */}
           <section className="issues-section">
@@ -1213,7 +1187,7 @@ const Home = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

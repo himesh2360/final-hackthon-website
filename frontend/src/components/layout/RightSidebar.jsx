@@ -1,9 +1,10 @@
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMapPin, FiArrowRight, FiCheckCircle, FiTrendingUp } from 'react-icons/fi';
 import TransformationCard from '../common/TransformationCard';
 import GlassmorphismReportCard from '../common/GlassmorphismReportCard';
 
-const RightSidebar = ({ stats }) => {
+const RightSidebar = memo(({ stats }) => {
     const trendingLocations = [
         { name: 'Gandhi Nagar', count: 12 },
         { name: 'Civil Lines', count: 8 },
@@ -129,7 +130,7 @@ const RightSidebar = ({ stats }) => {
             </div>
         </aside>
     );
-};
+});
 
 export default RightSidebar;
 

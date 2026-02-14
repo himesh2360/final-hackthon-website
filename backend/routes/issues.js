@@ -29,7 +29,7 @@ const issueValidation = [
         .notEmpty()
         .withMessage('Description is required'),
     body('category')
-        .isIn(['roads', 'water', 'electricity', 'sanitation', 'streetlights', 'drainage', 'garbage', 'public_safety', 'parks', 'other'])
+        .isIn(['roads', 'water', 'electricity', 'sanitation', 'streetlights', 'drainage', 'garbage', 'public_safety', 'parks', 'pollution', 'other'])
         .withMessage('Invalid category'),
     body('location.lat')
         .isFloat({ min: -90, max: 90 })

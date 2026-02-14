@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { FiCamera, FiArrowRight } from 'react-icons/fi';
 
-const GlassmorphismReportCard = () => {
+const GlassmorphismReportCard = memo(() => {
     return (
         <>
             <style>{`
@@ -140,6 +141,6 @@ const GlassmorphismReportCard = () => {
             </div>
         </>
     );
-};
+});
 
 export default GlassmorphismReportCard;
